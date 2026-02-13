@@ -1,0 +1,99 @@
+============================================================
+TEST: thinking = {'type': 'enabled'} (Moonshot native format)
+============================================================
+Stop reason: end_turn
+Usage: {
+  "inputTokens": 43,
+  "outputTokens": 88,
+  "totalTokens": 131
+}
+
+[TEXT]:  I need to solve this step by step.
+
+**Step 1: Calculate 25 × 47**
+
+25 × 47 = 25 × (40 + 7) = (25 × 40) + (25 × 7) = 1000 + 175 = **1175**
+
+**Step 2: Add 133**
+
+1175 + 133 = **1308**
+
+The answer is **1308**
+
+[NO REASONING CONTENT RETURNED]
+
+============================================================
+TEST: reasoning_config = 'high'
+============================================================
+Stop reason: end_turn
+Usage: {
+  "inputTokens": 42,
+  "outputTokens": 395,
+  "totalTokens": 437
+}
+
+[REASONING]:  The user wants me to calculate 25 * 47 + 133 step by step.
+
+First, I need to calculate 25 * 47.
+Then add 133 to the result.
+
+Let me calculate 25 * 47:
+- 25 * 40 = 1000
+- 25 * 7 = 175
+- 1000 + 175 = 1175
+
+Or another way:
+- 25 * 47 = 25 * (50 - 3) = 25 * 50 - 25 * 3 = 1250 - 75 = 1175
+
+Now add 133:
+- 1175 + 133 = ?
+- 1175 + 100 = 1275
+- 1275 + 30 = 1305
+- 1305 + 3 = 1308
+
+Or:
+- 1175 + 133 = 1175 + 125 + 8 = 1300 + 8 = 1308
+
+So the answer is 1308.
+
+I should present this clearly step by step as req
+
+[TEXT]:  Here's the step-by-step calculation:
+
+**Step 1: Calculate 25 × 47**
+- Break 47 into 40 + 7
+- 25 × 40 = 1,000
+- 25 × 7 = 175
+- 1,000 + 175 = **1,175**
+
+*(Alternative method: 25 × 47 = 25 × (50 - 3) = 1,250 - 75 = 1,175)*
+
+**Step 2: Add 133**
+- 1,175 + 133
+- 1,175 + 100 = 1,275
+- 1,275 + 30 = 1,305
+- 1,305 + 3 = **1,308**
+
+**Final Answer: 1,308**
+
+============================================================
+TEST: No reasoning_config (default)
+============================================================
+Stop reason: end_turn
+Usage: {
+  "inputTokens": 43,
+  "outputTokens": 79,
+  "totalTokens": 122
+}
+
+[TEXT]:  I need to solve this step by step, following order of operations (multiplication before addition).
+
+**Step 1: Calculate 25 × 47**
+
+25 × 47 = 25 × 40 + 25 × 7 = 1000 + 175 = **1175**
+
+**Step 2: Add 133**
+
+1175 + 133 = **1308**
+
+[NO REASONING CONTENT RETURNED]

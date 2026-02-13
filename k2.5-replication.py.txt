@@ -1,0 +1,77 @@
+import boto3
+import json
+
+bedrock_runtime = boto3.client(
+    service_name='bedrock-runtime',
+    region_name='us-east-1'
+)
+
+model_id = 'moonshotai.kimi-k2.5'
+
+
+def test_kimi_reasoning(test_name, additional_fields=None):
+    print("=" * 60)
+    print(f"TEST: {test_name}")
+    print("=" * 60)
+
+    kwargs = {
+        'modelId': model_id,
+        'messages': [
+            {
+                'role': 'user',
+                'content': [
+                    {'text': 'What is 25 * 47 + 133? Think step by step.'}
+                ]
+            }
+        ],
+        'inferenceConfig': {
+            'maxTokens': 8192,
+            'temperature': 1.0
+        }
+    }
+
+    if additional_fields:
+        kwargs['additionalModelRequestFields'] = additional_fields
+
+    try:
+        response = bedrock_runtime.converse(**kwargs)
+        output_message = response['output']['message']
+        print(f"Stop reason: {response['stopReason']}")
+        print(f"Usage: {json.dumps(response['usage'], indent=2)}")
+        print()
+
+        has_reasoning = False
+        for block in output_message['content']:
+            if 'reasoningContent' in block:
+                has_reasoning = True
+                reasoning = block['reasoningContent']
+                if 'reasoningText' in reasoning:
+                    print(f"[REASONING]: {reasoning['reasoningText']['text'][:500]}")
+                    print()
+            if 'text' in block:
+                print(f"[TEXT]: {block['text'][:500]}")
+                print()
+
+        if not has_reasoning:
+            print("[NO REASONING CONTENT RETURNED]")
+            print()
+
+    except Exception as e:
+        print(f"ERROR: {type(e).__name__}: {e}")
+        print()
+
+
+test_kimi_reasoning(
+    "thinking = {'type': 'enabled'} (Moonshot native format)",
+    additional_fields={'thinking': {'type': 'enabled'}}
+)
+
+test_kimi_reasoning(
+    "reasoning_config = 'high'",
+    additional_fields={'reasoning_config': 'high'}
+)
+
+test_kimi_reasoning(
+    "No reasoning_config (default)",
+    additional_fields=None
+)
