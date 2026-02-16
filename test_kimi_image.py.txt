@@ -1,0 +1,116 @@
+import boto3
+import json
+import base64
+from pathlib import Path
+
+bedrock_runtime = boto3.client(
+    service_name='bedrock-runtime',
+    region_name='us-east-1'
+)
+
+MODEL_ID = "moonshotai.kimi-k2.5"
+IMAGE_PATH = "test.png"
+PROMPT = "What do you see in this image? Please describe it in detail."
+
+def encode_image(image_path):
+    with open(image_path, 'rb') as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+def test_converse_api():
+    print("=" * 60)
+    print("TEST 1: Converse API")
+    print("=" * 60)
+    
+    image_base64 = encode_image(IMAGE_PATH)
+    image_format = Path(IMAGE_PATH).suffix.lstrip('.').lower()
+    if image_format == 'jpg':
+        image_format = 'jpeg'
+    
+    try:
+        response = bedrock_runtime.converse(
+            modelId=MODEL_ID,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "image": {
+                                "format": image_format,
+                                "source": {
+                                    "bytes": base64.b64decode(image_base64)
+                                }
+                            }
+                        },
+                        {
+                            "text": PROMPT
+                        }
+                    ]
+                }
+            ],
+            inferenceConfig={
+                "maxTokens": 2048,
+                "temperature": 0.7
+            }
+        )
+        
+        print("\n✅ SUCCESS")
+        print(json.dumps(response, indent=2, default=str))
+        
+    except Exception as e:
+        print(f"\n❌ ERROR: {e}")
+
+def test_invoke_model():
+    print("\n" + "=" * 60)
+    print("TEST 2: InvokeModel API")
+    print("=" * 60)
+    
+    image_base64 = encode_image(IMAGE_PATH)
+    image_format = Path(IMAGE_PATH).suffix.lstrip('.').lower()
+    if image_format == 'jpg':
+        image_format = 'jpeg'
+    
+    native_request = {
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/{image_format};base64,{image_base64}"
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": PROMPT
+                    }
+                ]
+            }
+        ],
+        "temperature": 0.7,
+        "max_tokens": 2048
+    }
+    
+    try:
+        response = bedrock_runtime.invoke_model(
+            modelId=MODEL_ID,
+            body=json.dumps(native_request),
+            contentType='application/json',
+            accept='application/json'
+        )
+        
+        response_body = json.loads(response['body'].read())
+        
+        print("\n✅ SUCCESS")
+        print(json.dumps(response_body, indent=2))
+        
+    except Exception as e:
+        print(f"\n❌ ERROR: {e}")
+
+if __name__ == "__main__":
+    if not Path(IMAGE_PATH).exists():
+        print(f"ERROR: {IMAGE_PATH} not found")
+        exit(1)
+    
+    test_converse_api()
+    test_invoke_model()
