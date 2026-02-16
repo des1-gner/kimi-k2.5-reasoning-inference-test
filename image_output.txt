@@ -1,0 +1,36 @@
+python3 test_kimi_image.py 
+============================================================
+TEST 1: Converse API
+============================================================
+
+❌ ERROR: An error occurred (ValidationException) when calling the Converse operation: This model doesn't support the image field for user messages. Remove image and try again.
+
+============================================================
+TEST 2: InvokeModel API
+============================================================
+
+✅ SUCCESS
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": " I see a nature photograph featuring a tall pine tree as the central focus, set against a clear blue sky. The tree has a straight trunk with green needle-filled branches extending outward. In the background, there are snow-capped mountains visible in the distance, and another smaller pine tree to the right. The foreground shows large gray rocks and boulders at the base of the trees.\n\nIn the upper right area of the image, there is white text that reads \"app dev\" with \"1 item\" underneath it, suggesting this might be a screenshot from a computer desktop or file management interface, where this nature image serves as the desktop wallpaper or background. There also appears to be a small purple UI element at the very top edge of the image, possibly part of a window or application interface. The overall aesthetic is a serene, natural mountain landscape typical of a Sierra Nevada or similar alpine environment.",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1771228683,
+  "id": "chatcmpl-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+  "model": "moonshotai.kimi-k2.5",
+  "object": "chat.completion",
+  "service_tier": "default",
+  "usage": {
+    "completion_tokens": 179,
+    "prompt_tokens": 254,
+    "total_tokens": 433
+  }
+}
